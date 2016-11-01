@@ -41,9 +41,9 @@ public class MainActivity extends Activity {
 
     //!!Candidates for class!!!
     //Game objects
-    int racketWidth;
-    int racketHeight;
-    Point racketPosition;
+    int racketWidth, racket2Width;
+    int racketHeight, racket2Height;
+    Point racketPosition, racket2Position;
 
     Point ballPosition;
     int ballWidth;
@@ -111,6 +111,12 @@ public class MainActivity extends Activity {
         racketPosition.y = screenHeight - 20;
         racketWidth = screenWidth / 8;
         racketHeight = 10;
+
+        racket2Position = new Point();
+        racket2Position.x = screenWidth / 2;
+        racket2Position.y = +40;
+        racket2Width = screenWidth / 8;
+        racket2Height = 10;
 
         ballWidth = screenWidth / 35;
         ballPosition = new Point();
@@ -276,7 +282,31 @@ public class MainActivity extends Activity {
 
                 }
             }
+//FIX the Racket 2 Collision, page 274 in the book
+            if (ballPosition.y - ballWidth <= (racket2Position.y - racket2Height / 2)) {
+                int halfRacket2 = racket2Width / 2;
+                if (ballPosition.x + ballWidth < (racket2Position.x + halfRacket2)
+                        && ballPosition.x - ballWidth > (racket2Position.x - halfRacket2)) {
+                    //rebound the ball and play a sound
+                    soundPool.play(sample3, 1, 1, 0, 0, 1);
+                    score++;
+                    ballIsMovingUp = true;
+                    ballIsMovingDown = false;
+                    //now decide how to rebound the ball
+                    if (ballPosition.x > racket2Position.x) {
+                        ballIsMovingRight = true;
+                        ballIsMovingLeft = false;
+
+                    } else {
+                        ballIsMovingRight = false;
+                        ballIsMovingLeft = true;
+                    }
+
+                }
+            }
+
         }
+
 
         public void drawCourt() {
 
@@ -293,6 +323,10 @@ public class MainActivity extends Activity {
                 canvas.drawRect(racketPosition.x - (racketWidth / 2),
                         racketPosition.y - (racketHeight / 2), racketPosition.x + (racketWidth / 2),
                         racketPosition.y + racketHeight, paint);
+
+                canvas.drawRect (racket2Position.x - (racket2Width / 2),
+                        racket2Position.y - (racket2Height / 2), racket2Position.x + (racket2Width/2),
+                        racket2Position.y + racket2Height,paint);
 
                 //Draw the ball
                 canvas.drawRect(ballPosition.x, ballPosition.y,
